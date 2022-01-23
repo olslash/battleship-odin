@@ -5,59 +5,67 @@ import { waitForMove } from "./util";
 import { updateDOM } from "./dom";
 import "./index.css";
 
-async function main() {
-  const result = await game();
-  alert(`Player ${result} wins!`);
-}
+class Game {
+  private boardSize = 10;
+  private playerShips = [1, 2, 4, 6];
+  private boards = this.initBoards();
+  private currentPlayer: Player = 0;
 
-async function game(): Promise<Player> {
-  const boardSize = 10;
-  const playerShips = [1, 2, 4, 6];
+  public async run(): Promise<Player> {
+    const result = await this.gameLoop();
+    return result;
+  }
 
-  const p1Board = new GameBoard(boardSize);
-  playerShips
-    .map((size) => new Ship(size))
-    .forEach((ship, i) => p1Board.addShip(ship, [0, i], "v"));
-
-  const p2Board = new GameBoard(boardSize);
-  playerShips
-    .map((size) => new Ship(size))
-    .forEach((ship, i) => p2Board.addShip(ship, [4, i], "v"));
-
-  const boards = [p1Board, p2Board];
-  let currentPlayer: Player = 0;
-
-  while (true) {
-    // loop until someone wins or there's a tie
-
-    // @ts-ignore ??
-    const otherPlayer = currentPlayer === 0 ? 1 : 0;
-    const otherPlayerBoard = boards[otherPlayer];
-
-    updateDOM(otherPlayerBoard.getBoard(), currentPlayer);
-
+  private async gameLoop(): Promise<Player> {
     while (true) {
-      // wait for a valid move
+      // loop until someone wins or there's a tie
 
-      const [x, y] = await waitForMove(currentPlayer);
-      const result = otherPlayerBoard.receiveAttack([x, y]);
+      // @ts-ignore ??
+      const otherPlayer = this.currentPlayer === 0 ? 1 : 0;
+      const otherPlayerBoard = this.boards[otherPlayer];
 
-      if (result) {
-        alert(`${result}!`);
+      updateDOM(otherPlayerBoard.getBoard(), this.currentPlayer);
+
+      while (true) {
+        // wait for a valid move
+
+        const [x, y] = await waitForMove(this.currentPlayer);
+        const result = otherPlayerBoard.receiveAttack([x, y]);
+
+        if (result) {
+          alert(`${result}!`);
+        }
+
+        if (result) {
+          break;
+        }
       }
 
-      if (result) {
-        break;
+      const loss = otherPlayerBoard.hasLost();
+      if (loss) {
+        return this.currentPlayer;
       }
-    }
 
-    const loss = otherPlayerBoard.hasLost();
-    if (loss) {
-      return currentPlayer;
+      this.currentPlayer = otherPlayer;
     }
+  }
 
-    currentPlayer = otherPlayer;
+  private initBoards() {
+    const p1Board = new GameBoard(this.boardSize);
+    this.playerShips
+      .map((size) => new Ship(size))
+      .forEach((ship, i) => p1Board.addShip(ship, [0, i], "v"));
+
+    const p2Board = new GameBoard(this.boardSize);
+    this.playerShips
+      .map((size) => new Ship(size))
+      .forEach((ship, i) => p2Board.addShip(ship, [4, i], "v"));
+
+    return [p1Board, p2Board];
   }
 }
 
-main();
+const game = new Game();
+game.run().then((result) => {
+  alert(`Player ${result} wins!`);
+});

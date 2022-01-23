@@ -47,7 +47,7 @@ export class GameBoard {
     return true;
   }
 
-  public receiveAttack([x, y]: Coord): "miss" | "hit" | false {
+  public receiveAttack([x, y]: Coord): "miss" | "hit" | "sunk" | false {
     const square = this.board[x][y];
 
     if (square.ship && typeof square.shipLocation === "number") {
@@ -56,6 +56,10 @@ export class GameBoard {
       if (alreadyHit) {
         // already hit, invalid
         return false;
+      }
+
+      if (square.ship.isSunk()) {
+        return "sunk";
       }
 
       return "hit";

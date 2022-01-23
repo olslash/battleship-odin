@@ -5,7 +5,7 @@ export function updateDOM(board: BoardSquare[][], player: Player) {
   const gridEl = document.getElementById("grid");
   const playerNameEl = document.getElementById("player");
   gridEl!.innerHTML = "";
-  playerNameEl!.innerHTML = `Current player: ${player}`;
+  playerNameEl!.innerHTML = `Player ${player}`;
 
   // fixme: why arent these y,x?
   board.forEach((row, x) => {
