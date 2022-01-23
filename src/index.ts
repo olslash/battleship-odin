@@ -13,6 +13,7 @@ class Game {
 
   public async run(): Promise<Player> {
     const result = await this.gameLoop();
+
     return result;
   }
 
@@ -20,7 +21,6 @@ class Game {
     while (true) {
       // loop until someone wins or there's a tie
 
-      // @ts-ignore ??
       const otherPlayer = this.currentPlayer === 0 ? 1 : 0;
       const otherPlayerBoard = this.boards[otherPlayer];
 
@@ -34,15 +34,12 @@ class Game {
 
         if (result) {
           alert(`${result}!`);
-        }
-
-        if (result) {
           break;
         }
       }
 
-      const loss = otherPlayerBoard.hasLost();
-      if (loss) {
+      const playerWon = otherPlayerBoard.hasLost();
+      if (playerWon) {
         return this.currentPlayer;
       }
 

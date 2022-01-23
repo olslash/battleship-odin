@@ -1,10 +1,8 @@
 export class Ship {
-  // public player: Player;
   public length: number;
   private hitLocations: boolean[];
 
   constructor(length: number) {
-    // this.player = player;
     this.length = length;
     this.hitLocations = new Array(length).fill(false);
   }
