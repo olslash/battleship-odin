@@ -1,0 +1,38 @@
+html,
+body {
+  height: 100vw;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+#grid {
+  display: grid;
+  height: 100vw;
+  width: 100%;
+
+  /* fixme - dynamic based on size */
+  grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
+  grid-template-rows: 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
+  gap: 0px 0px;
+}
+
+.square {
+  border: 1px solid black;
+}
+
+.square.ship {
+  /* background: black; */
+}
+
+.square.hit {
+  background: red;
+}
+
+.square.miss {
+  background: blue;
+}
+
+.square.sunk {
+  background: pink;
+}
