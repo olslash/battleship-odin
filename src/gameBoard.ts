@@ -10,10 +10,12 @@ export type Coord = [number, number];
 export type Orientation = "v" | "h";
 
 export class GameBoard {
+  private size: number;
   private ships: Ship[];
   private board: BoardSquare[][];
 
   constructor(size: number) {
+    this.size = size;
     this.ships = [];
     this.board = new Array(size).fill(null);
     this.board = this.board.map((_) =>
@@ -26,23 +28,32 @@ export class GameBoard {
   }
 
   public addShip(ship: Ship, [x, y]: Coord, orientation: Orientation): boolean {
-    if (this.board[x][y].ship || this.ships.includes(ship)) {
+    const shipAlreadyAtOrigin = !!this.board[x][y].ship;
+    const shipAlreadyExistsOnBoard = this.ships.includes(ship);
+
+    if (shipAlreadyAtOrigin || shipAlreadyExistsOnBoard) {
       return false;
     }
 
-    this.ships.push(ship);
+    const placementCoords = new Array(ship.length)
+      .fill(null)
+      .map((_, i) => (orientation === "v" ? [x + i, y] : [x, y + i]));
 
-    for (let i = 0; i < ship.length; i++) {
-      let coords: Coord;
-      if (orientation === "v") {
-        coords = [x + i, y];
-      } else {
-        coords = [x, y + i];
-      }
+    const anyOverlaps = placementCoords.some(([x, y]) => this.board[x][y].ship);
+    const goesOffBoard = placementCoords.some(
+      ([x, y]) => x > this.size - 1 || y > this.size - 1
+    );
 
-      const square: BoardSquare = { ship, shipLocation: i, miss: false };
-      this.board[coords[0]][coords[1]] = square;
+    if (anyOverlaps || goesOffBoard) {
+      return false;
     }
+
+    placementCoords.forEach(([x, y], i) => {
+      const square: BoardSquare = { ship, shipLocation: i, miss: false };
+      this.board[x][y] = square;
+    });
+
+    this.ships.push(ship);
 
     return true;
   }
