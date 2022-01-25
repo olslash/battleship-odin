@@ -29,7 +29,7 @@ class Game {
       while (true) {
         // wait for a valid move
 
-        const [x, y] = await waitForMove(this.currentPlayer);
+        const [x, y] = await waitForMove();
         const result = otherPlayerBoard.receiveAttack([x, y]);
 
         if (result) {

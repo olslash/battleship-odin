@@ -1,6 +1,4 @@
-import { Player } from "./types";
-
-export async function waitForMove(player: Player) {
+export async function waitForMove() {
   return new Promise<[number, number]>((resolve) => {
     document.body.addEventListener("click", function clickListener(e) {
       const hitX = (e.target! as HTMLElement).getAttribute("data-x");
